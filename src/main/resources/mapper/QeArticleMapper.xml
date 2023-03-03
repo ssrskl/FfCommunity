@@ -71,41 +71,70 @@
         group by qe_article.article_id
         <where>
             <if test="articleId != null">
-                qe_article.article_id =
-                #{articleId}
+                qe_article.article_id = #{articleId}
             </if>
             <if test="articleTitle != null and articleTitle != ''">
                 and
-                qe_article
-                .
-                article_title
-                =
-                #{articleTitle}
+                    qe_article
+                    .
+                    article_title
+                    = #{articleTitle}
             </if>
             <if test="sectionId != null">
                 and
-                qe_article
-                .
-                section_id
-                =
-                #{sectionId}
+                    qe_article
+                    .
+                    section_id
+                    = #{sectionId}
             </if>
             <if test="authorId != null">
                 and
-                qe_article
-                .
-                author_id
-                =
-                #{authorId}
+                    qe_article
+                    .
+                    author_id
+                    = #{authorId}
             </if>
             <if test="articleTop != null">
                 and
-                qe_article
-                .
-                article_top
-                =
-                #{articleTop}
+                    qe_article
+                    .
+                    article_top
+                    = #{articleTop}
             </if>
         </where>
     </select>
+
+    <insert id="insertQeArticle">
+        insert into qe_article (article_title, article_content, article_image, section_id, section_type_id,
+                                author_id, create_time, update_time)
+        values (#{articleTitle}, #{articleContent}, #{articleImage}, #{sectionId}, #{sectionTypeId}, #{authorId}, now(),
+                now());
+    </insert>
+    <!--update方法的参数判定中注意逗号-->
+    <!--    修改方法一般用不到，暂缓-->
+    <update id="updateQeArticle">
+        update qe_article
+        set
+        <if test="articleTitle != null and articleTitle != ''">
+            article_title = #{articleTitle},
+        </if>
+        <if test="articleContent != null and articleContent != ''">
+            article_content = #{articleContent},
+        </if>
+        <if test="articleImage != null and articleImage != ''">
+            article_image = #{articleImage},
+        </if>
+        <if test="sectionId != null">
+            section_id=#{sectionTypeId},
+        </if>
+        <if test="sectionTypeId != null">
+            section_type_id=#{sectionTypeId},
+        </if>
+        update_time=now()
+        where author_id = #{authorId}
+    </update>
+
+    <delete id="deleteQeArticle">
+        delete from qe_article where author_id= #{param2} and article_id= #{param1}
+    </delete>
 </mapper>
