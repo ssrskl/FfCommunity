@@ -3,7 +3,6 @@ package com.maoyan.ffcommunity.controller;
 import cn.dev33.satoken.annotation.SaCheckLogin;
 import com.github.pagehelper.PageInfo;
 import com.maoyan.ffcommunity.entity.QeArticle;
-import com.maoyan.ffcommunity.entity.QeSchool;
 import com.maoyan.ffcommunity.entity.vo.qearticle.QeArticleQueryVO;
 import com.maoyan.ffcommunity.entity.vo.qearticle.QeArticleReceiveVO;
 import com.maoyan.ffcommunity.service.QeArticleService;

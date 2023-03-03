@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.maoyan.ffcommunity.mapper.QeCommentMapper">
+    <insert id="insertQeComment">
+        insert into qe_comment (article_id, content, comment_user_id, to_user_id, reply_id, root_id,
+                                create_time)
+        values (#{articleId}, #{content}, #{commentUserId}, #{toUserId}, #{replyId}, #{rootId},
+                #{createTime});
+    </insert>
+
+    <delete id="deleteQeComment">
+    </delete>
+
+    <resultMap id="QeCommentDetailMap" type="com.maoyan.ffcommunity.entity.vo.qecomment.QeCommentDetailVO">
+        <result column="comment_id" property="commentId"/>
+        <result column="article_id" property="articleId"/>
+        <result column="content" property="content"/>
+        <result column="comment_user_id" property="commentUserId"/>
+        <result column="to_user_id" property="toUserId"/>
+        <result column="reply_id" property="replyId"/>
+        <result column="root_id" property="rootId"/>
+        <result column="delete_flag" property="deleteFlag"/>
+        <result column="create_time" property="createTime"/>
+        <association property="commonQeUser" javaType="com.maoyan.ffcommunity.entity.QeUser">
+            <result column="user_id" property="userId"/>
+            <result column="user_name" property="userName"/>
+            <result column="email" property="email"/>
+            <result column="phone_number" property="phoneNumber"/>
+            <result column="sex" property="sex"/>
+            <result column="avatar" property="avatar"/>
+            <result column="login_ip" property="loginIp"/>
+            <result column="login_date" property="loginDate"/>
+            <result column="signature" property="signature"/>
+            <result column="grade" property="grade"/>
+            <result column="experience" property="experience"/>
+            <result column="email_status" property="emailStatus"/>
+            <result column="school_id" property="schoolId"/>
+            <result column="delete_flag" property="deleteFlag"/>
+            <result column="qu_create_time" property="createTime"/>
+            <result column="qu_update_time" property="updateTime"/>
+        </association>
+        <association property="toQeUser" javaType="com.maoyan.ffcommunity.entity.QeUser">
+            <result column="qu2_user_id" property="userId"/>
+            <result column="qu2_user_name" property="userName"/>
+            <result column="qu2_email" property="email"/>
+            <result column="qu2_phone_number" property="phoneNumber"/>
+            <result column="qu2_sex" property="sex"/>
+            <result column="qu2_avatar" property="avatar"/>
+            <result column="qu2_login_ip" property="loginIp"/>
+            <result column="qu2_login_date" property="loginDate"/>
+            <result column="qu2_signature" property="signature"/>
+            <result column="qu2_grade" property="grade"/>
+            <result column="qu2_experience" property="experience"/>
+            <result column="qu2_email_status" property="emailStatus"/>
+            <result column="qu2_school_id" property="schoolId"/>
+            <result column="qu2_delete_flag" property="deleteFlag"/>
+            <result column="qu2_create_time" property="createTime"/>
+            <result column="qu2_update_time" property="updateTime"/>
+        </association>
+    </resultMap>
+    <select id="commonSelectQeCommentDetailList"
+            resultMap="QeCommentDetailMap">
+        select qe_comment.*,
+               qu.user_id,
+               qu.user_name,
+               qu.email,
+               qu.phone_number,
+               qu.sex,
+               qu.avatar,
+               qu.login_ip,
+               qu.login_date,
+               qu.signature,
+               qu.grade,
+               qu.experience,
+               qu.email_status,
+               qu.school_id,
+               qu.create_time as qu_create_time,
+               qu.update_time as qu_update_time,
+               qu2.user_id      as qu2_user_id,
+               qu2.user_name    as qu2_user_name,
+               qu2.email        as qu2_email,
+               qu2.phone_number as qu2_phone_number,
+               qu2.sex          as qu2_sex,
+               qu2.avatar       as qu2_avatar,
+               qu2.login_ip     as qu2_login_ip,
+               qu2.login_date   as qu2_login_date,
+               qu2.signature    as qu2_signature,
+               qu2.grade        as qu2_grade,
+               qu2.experience   as qu2_experience,
+               qu2.email_status as qu2_email_status,
+               qu2.school_id    as qu2_school_id,
+               qu2.delete_flag  as qu2_delete_flag,
+               qu2.create_time  as qu2_create_time,
+               qu2.update_time  as qu2_update_time
+        from qe_comment
+                 left join qe_user qu on qe_comment.comment_id = qu.user_id
+                 left join qe_user qu2 on qe_comment.to_user_id = qu2.user_id
+        group by qe_comment.comment_id
+        <where>
+            <if test="articleId != null">
+                and qe_comment.article_id = #{articleId}
+            </if>
+            <if test="commentUserId != null">
+                and qe_comment.comment_user_id = #{commentUserId}
+            </if>
+            <if test="toUserId != null">
+                and qe_comment.to_user_id = #{toUserId}
+            </if>
+            <if test="replyId != null">
+                and qe_comment.reply_id = #{replyId}
+            </if>
+            <if test="rootId != null">
+                and qe_comment.root_id = #{rootId}
+            </if>
+        </where>
+    </select>
+</mapper>

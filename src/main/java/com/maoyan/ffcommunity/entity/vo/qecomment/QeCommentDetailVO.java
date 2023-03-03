@@ -1,18 +1,18 @@
-package com.maoyan.ffcommunity.entity;
+package com.maoyan.ffcommunity.entity.vo.qecomment;
 
-import java.time.LocalDateTime;
-import java.util.Date;
-
+import com.maoyan.ffcommunity.entity.QeUser;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
 
+import java.time.LocalDateTime;
+
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 @ToString
-public class QeComment {
+public class QeCommentDetailVO {
     /**
      * 评论ID
      */
@@ -62,5 +62,13 @@ public class QeComment {
      * 创建时间
      */
     private LocalDateTime createTime;
-}
 
+    /**
+     * 评论者
+     */
+    private QeUser commonQeUser;
+    /**
+     * 被回复的人
+     */
+    private QeUser toQeUser;
+}
