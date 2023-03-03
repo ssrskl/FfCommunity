@@ -20,6 +20,11 @@ public class QeCommentController {
     @Autowired
     private QeCommentService qeCommentService;
 
+    /**
+     * 发布一条评论
+     * @param qeCommentReceiveVO
+     * @return
+     */
     @SaCheckLogin
     @PostMapping(value = "/publish")
     public AjaxResult publishQeComment(@RequestBody QeCommentReceiveVO qeCommentReceiveVO) {
@@ -29,6 +34,13 @@ public class QeCommentController {
         return AjaxResult.success("发布成功", i);
     }
 
+    /**
+     * 通用查询评论列表
+     * @param pageNum
+     * @param pageSize
+     * @param qeComment
+     * @return
+     */
     @GetMapping(value = "/query")
     public AjaxResult commonQueryQeCommentDetailList(@RequestParam(value = "pageNum", defaultValue = "1") int pageNum,
                                                      @RequestParam(value = "pageSize", defaultValue = "10") int pageSize,
