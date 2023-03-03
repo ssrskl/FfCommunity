@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.maoyan.ffcommunity.mapper.QeSchoolMapper">
+    <select id="selectQeSchoolById" resultType="com.maoyan.ffcommunity.entity.QeSchool">
+        select *
+        from qe_school
+        where school_id = #{qeSchoolId}
+    </select>
+
+    <select id="commonSelectQeSchool" resultType="com.maoyan.ffcommunity.entity.QeSchool">
+        select *
+        from qe_school
+        <where>
+            <if test="schoolId != null">
+                school_id = #{schoolId}
+            </if>
+            <if test="schoolName != null and schoolName != ''">
+                and school_name like concat('%', #{schoolName}, '%')
+            </if>
+            <if test="schoolIntroduce != null and schoolIntroduce != ''">
+                and school_introduce like concat('%', #{schoolIntroduce}, '%')
+            </if>
+            <if test="schoolLocation != null and schoolLocation != ''">
+                and school_location like concat('%', #{schoolLocation}, '%')
+            </if>
+        </where>
+    </select>
+</mapper>

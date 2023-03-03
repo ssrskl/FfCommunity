@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.maoyan.ffcommunity.mapper.QeSectionMapper">
+    <resultMap id="QeSectionQueryMap" type="com.maoyan.ffcommunity.entity.vo.qesection.QeSectionQueryVO">
+        <result column="section_id" property="sectionId"/>
+        <result column="section_name" property="sectionName"/>
+        <result column="section_introduce" property="sectionIntroduce"/>
+        <result column="section_logo" property="sectionLogo"/>
+        <result column="section_background" property="sectionBackground"/>
+        <result column="section_admin_user_id" property="sectionAdminUserId"/>
+        <result column="section_weight" property="sectionWeight"/>
+        <result column="section_top" property="sectionTop"/>
+        <result column="delete_flag" property="deleteFlag"/>
+        <result column="create_time" property="createTime"/>
+        <result column="update_time" property="updateTime"/>
+        <result column="number_of_followers" property="numberOfFollowers"/>
+    </resultMap>
+    <select id="selectQeSectionQuery" resultMap="QeSectionQueryMap">
+        SELECT s.*,
+               COUNT(sf.follow_id) AS number_of_followers
+        FROM qe_section s
+                 LEFT JOIN qe_section_follow sf ON s.section_id = sf.get_follow_qesection_id
+        <where>
+            <if test="sectionId != null and sectionName != ''">
+                    s.section_id =
+                    #{sectionId}
+            </if>
+            <if test="sectionName != null and sectionName != ''">
+                and s.section_name
+                    like
+                    concat
+                        (
+                            '%',
+                            #{sectionName},
+                            '%'
+                        )
+            </if>
+            <if test="sectionAdminUserId != null and sectionAdminUserId != ''">
+                and s.section_admin_user_id
+                    = #{sectionAdminUserId}
+            </if>
+            <if test="sectionTop != null and sectionTop != ''">
+                and s.section_top
+                    = #{sectionTop,jdbcType=BOOLEAN}
+            </if>
+        </where>
+        GROUP BY s.section_id
+    </select>
+
+    <select id="selectQeSectionById" resultType="com.maoyan.ffcommunity.entity.QeSection">
+        select *
+        from qe_section
+        where section_id = #{qeSectionId}
+    </select>
+</mapper>

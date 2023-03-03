@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.maoyan.ffcommunity.mapper.QeArticleMapper">
+    <select id="selectQeArticleById" resultType="com.maoyan.ffcommunity.entity.QeArticle">
+        select *
+        from qe_article
+        where article_id = #{qeArticleId};
+    </select>
+
+    <resultMap id="QeArticleQueryMap" type="com.maoyan.ffcommunity.entity.vo.qearticle.QeArticleQueryVO">
+        <result column="article_id" property="articleId"/>
+        <result column="article_title" property="articleTitle"/>
+        <result column="article_content" property="articleContent"/>
+        <result column="article_image" property="articleImage"/>
+        <result column="article_section_id" property="sectionId"/>
+        <result column="section_type_id" property="sectionTypeId"/>
+        <result column="author_id" property="authorId"/>
+        <result column="status" property="status"/>
+        <result column="article_weight" property="articleWeight"/>
+        <result column="article_top" property="articleTop"/>
+        <result column="article_delete_flag" property="deleteFlag"/>
+        <result column="article_create_time" property="createTime"/>
+        <result column="article_update_time" property="updateTime"/>
+        <result column="collection_count" property="collectionCount"/>
+        <result column="comment_count" property="commentCount"/>
+        <association property="qeSection" javaType="com.maoyan.ffcommunity.entity.QeSection">
+            <result column="section_id" property="sectionId"/>
+            <result column="section_name" property="sectionName"/>
+            <result column="section_introduce" property="sectionIntroduce"/>
+            <result column="section_logo" property="sectionLogo"/>
+            <result column="section_background" property="sectionBackground"/>
+            <result column="section_admin_user_id" property="sectionAdminUserId"/>
+            <result column="section_weight" property="sectionWeight"/>
+            <result column="section_top" property="sectionTop"/>
+            <result column="delete_flag" property="deleteFlag"/>
+            <result column="create_time" property="createTime"/>
+            <result column="update_time" property="updateTime"/>
+        </association>
+    </resultMap>
+    <select id="commonSelectQeArticleQuery" resultMap="QeArticleQueryMap">
+        select qe_article.article_id,
+               qe_article.article_title,
+               qe_article.article_content,
+               qe_article.article_image,
+               qe_article.section_id   as article_section_id,
+               qe_article.section_type_id,
+               qe_article.author_id,
+               qe_article.status,
+               qe_article.article_weight,
+               qe_article.article_top,
+               qe_article.delete_flag  as article_delete_flag,
+               qe_article.create_time  as article_create_time,
+               qe_article.update_time  as article_update_time,
+               qe_section.section_id,
+               qe_section.section_name,
+               qe_section.section_introduce,
+               qe_section.section_logo,
+               qe_section.section_background,
+               qe_section.section_admin_user_id,
+               qe_section.section_weight,
+               qe_section.section_top,
+               qe_section.delete_flag,
+               qe_section.create_time,
+               qe_section.update_time,
+               COUNT(qc.collection_id) AS collection_count,
+               count(q.comment_id)     as comment_count
+        from qe_article
+                 left join qe_section on qe_article.section_id = qe_section.section_id
+                 left join qe_collection as qc on qe_article.article_id = qc.article_id
+                 left join qe_comment as q on qe_article.article_id = q.article_id
+        group by qe_article.article_id
+        <where>
+            <if test="articleId != null">
+                qe_article.article_id =
+                #{articleId}
+            </if>
+            <if test="articleTitle != null and articleTitle != ''">
+                and
+                qe_article
+                .
+                article_title
+                =
+                #{articleTitle}
+            </if>
+            <if test="sectionId != null">
+                and
+                qe_article
+                .
+                section_id
+                =
+                #{sectionId}
+            </if>
+            <if test="authorId != null">
+                and
+                qe_article
+                .
+                author_id
+                =
+                #{authorId}
+            </if>
+            <if test="articleTop != null">
+                and
+                qe_article
+                .
+                article_top
+                =
+                #{articleTop}
+            </if>
+        </where>
+    </select>
+</mapper>

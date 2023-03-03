@@ -1,0 +1,141 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.maoyan.ffcommunity.mapper.QeFollowMapper">
+    <insert id="insertQeUserFollow">
+        insert into qe_user_follow (give_follow_qeuser_id, get_follow_qeuser_id, update_time)
+        values (#{giveFollowQeuserId}, #{getFollowQeuserId}, now());
+    </insert>
+    <resultMap id="QeUserFollowFanMap" type="com.maoyan.ffcommunity.entity.vo.qeuserfollow.QeUserFollowFanVO">
+        <result column="follow_id" property="followId"/>
+        <result column="give_follow_qeuser_id" property="giveFollowQeuserId"/>
+        <result column="get_follow_qeuser_id" property="getFollowQeuserId"/>
+        <result column="create_time" property="createTime"/>
+        <result column="update_time" property="updateTime"/>
+        <association property="giveFollowQeuser" javaType="com.maoyan.ffcommunity.entity.QeUser">
+            <result column="user_id" property="userId"/>
+            <result column="user_name" property="userName"/>
+            <result column="email" property="email"/>
+            <result column="phone_number" property="phoneNumber"/>
+            <result column="sex" property="sex"/>
+            <result column="avatar" property="avatar"/>
+            <result column="status" property="status"/>
+            <result column="login_ip" property="loginIp"/>
+            <result column="login_date" property="loginDate"/>
+            <result column="signature" property="signature"/>
+            <result column="grade" property="grade"/>
+            <result column="experience" property="experience"/>
+            <result column="email_status" property="emailStatus"/>
+            <result column="school_id" property="schoolId"/>
+            <result column="delete_flag" property="deleteFlag"/>
+            <result column="create_time" property="createTime"/>
+            <result column="update_time" property="updateTime"/>
+        </association>
+    </resultMap>
+    <resultMap id="QeUserFollowedMap" type="com.maoyan.ffcommunity.entity.vo.qeuserfollow.QeUserFollowedVO">
+        <result column="follow_id" property="followId"/>
+        <result column="give_follow_qeuser_id" property="giveFollowQeuserId"/>
+        <result column="get_follow_qeuser_id" property="getFollowQeuserId"/>
+        <result column="create_time" property="createTime"/>
+        <result column="update_time" property="updateTime"/>
+        <association property="getFollowQeuser" javaType="com.maoyan.ffcommunity.entity.QeUser">
+            <result column="user_id" property="userId"/>
+            <result column="user_name" property="userName"/>
+            <result column="email" property="email"/>
+            <result column="phone_number" property="phoneNumber"/>
+            <result column="sex" property="sex"/>
+            <result column="avatar" property="avatar"/>
+            <result column="status" property="status"/>
+            <result column="login_ip" property="loginIp"/>
+            <result column="login_date" property="loginDate"/>
+            <result column="signature" property="signature"/>
+            <result column="grade" property="grade"/>
+            <result column="experience" property="experience"/>
+            <result column="email_status" property="emailStatus"/>
+            <result column="school_id" property="schoolId"/>
+            <result column="delete_flag" property="deleteFlag"/>
+            <result column="create_time" property="createTime"/>
+            <result column="update_time" property="updateTime"/>
+        </association>
+    </resultMap>
+    <select id="selectGiveFollowersById" resultMap="QeUserFollowFanMap">
+        select qe_user_follow.follow_id,
+               qe_user_follow.give_follow_qeuser_id,
+               qe_user_follow.get_follow_qeuser_id,
+               qe_user_follow.create_time,
+               qe_user_follow.update_time,
+               qu.user_id,
+               qu.user_name,
+               qu.email,
+               qu.phone_number,
+               qu.sex,
+               qu.avatar,
+               qu.status,
+               qu.login_ip,
+               qu.login_date,
+               qu.signature,
+               qu.grade,
+               qu.experience,
+               qu.email_status,
+               qu.school_id,
+               qu.delete_flag,
+               qu.create_time,
+               qu.update_time
+        from qe_user_follow
+                 left join qe_user qu on qu.user_id = qe_user_follow.give_follow_qeuser_id
+        where qe_user_follow.get_follow_qeuser_id = #{qeFollowedUserId}
+    </select>
+
+    <select id="selectGetFollowersById" resultMap="QeUserFollowedMap">
+        select qe_user_follow.follow_id,
+               qe_user_follow.give_follow_qeuser_id,
+               qe_user_follow.get_follow_qeuser_id,
+               qe_user_follow.create_time,
+               qe_user_follow.update_time,
+               qu.user_id,
+               qu.user_name,
+               qu.email,
+               qu.phone_number,
+               qu.sex,
+               qu.avatar,
+               qu.status,
+               qu.login_ip,
+               qu.login_date,
+               qu.signature,
+               qu.grade,
+               qu.experience,
+               qu.email_status,
+               qu.school_id,
+               qu.delete_flag,
+               qu.create_time,
+               qu.update_time
+        from qe_user_follow
+                 left join qe_user qu on qu.user_id = qe_user_follow.get_follow_qeuser_id
+        where qe_user_follow.give_follow_qeuser_id = #{qeFollowUserId}
+    </select>
+
+    <delete id="deleteQeUserFollow">
+        delete
+        from qe_user_follow
+        where give_follow_qeuser_id = #{giveFollowQeUserId}
+        and get_follow_qeuser_id= #{getFollowQeUserId}
+    </delete>
+
+    <select id="selectQeUserFollow" resultType="com.maoyan.ffcommunity.entity.QeUserFollow">
+        select *
+        from qe_user_follow
+        where give_follow_qeuser_id = #{giveFollowQeUserId}
+          and get_follow_qeuser_id = #{getFollowQeUserId}
+    </select>
+
+    <insert id="insertQeSectionFollow">
+        insert into qe_section_follow (give_follow_qeuser_id, get_follow_qesection_id)
+        values (#{giveFollowQeuserId}, #{getFollowQesectionId});
+    </insert>
+
+    <select id="selectQeSectionFollow" resultType="com.maoyan.ffcommunity.entity.QeSectionFollow">
+        select *
+        from qe_section_follow
+        where give_follow_qeuser_id = #{giveFollowQeUserId}
+        and get_follow_qesection_id = #{getFollowQeSectionId}
+    </select>
+</mapper>

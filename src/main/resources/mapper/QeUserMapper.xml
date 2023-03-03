@@ -1,0 +1,131 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.maoyan.ffcommunity.mapper.QeUserMapper">
+    <insert id="insertQeUser" parameterType="com.maoyan.ffcommunity.entity.QeUser">
+        insert into qe_user (user_name, email, phone_number, sex, avatar, password, login_ip, login_date, signature,
+                             school_id)
+        values (#{userName}, #{email}, #{phoneNumber}, #{sex},
+                #{avatar}, #{password}, #{loginIp}, #{loginDate},
+                #{signature}, #{schoolId})
+    </insert>
+    <update id="updateQeUser" parameterType="com.maoyan.ffcommunity.entity.QeUser">
+        update qe_user
+        <set>
+            <if test="userName != null and userName != ''">
+                user_name = #{userName}
+            </if>
+            <if test="email != null and email != ''">
+                email = #{email}
+            </if>
+            <if test="phone_number != null and phone_number != ''">
+                phone_number = #{phoneNumber}
+            </if>
+            <if test="sex != null and sex != ''">
+                sex = #{sex}
+            </if>
+            <if test="avatar != null and avatar != ''">
+                avatar = #{avatar}
+            </if>
+            <if test="password != null and password != ''">
+                password = #{password}
+            </if>
+            <if test="signature != null and signature != ''">
+                signature = #{signature}
+            </if>
+            <if test="school_id != null and school_id != ''">
+                school_id = #{schoolId}
+            </if>
+        </set>
+        where user_id = #{userId}
+    </update>
+    <select id="selectQeUserById" resultType="com.maoyan.ffcommunity.entity.QeUser">
+        select *
+        from qe_user
+        where user_id = #{qeUserId}
+    </select>
+    <resultMap id="QeUserDetailMap" type="com.maoyan.ffcommunity.entity.vo.qeuser.QeUserDetailVO">
+        <result column="user_id" property="userId"/>
+        <result column="user_name" property="userName"/>
+        <result column="email" property="email"/>
+        <result column="phone_number" property="phoneNumber"/>
+        <result column="sex" property="sex"/>
+        <result column="avatar" property="avatar"/>
+        <result column="status" property="status"/>
+        <result column="login_ip" property="loginIp"/>
+        <result column="login_date" property="loginDate"/>
+        <result column="signature" property="signature"/>
+        <result column="grade" property="grade"/>
+        <result column="experience" property="experience"/>
+        <result column="email_status" property="emailStatus"/>
+        <result column="school_id" property="schoolId"/>
+        <result column="delete_flag" property="deleteFlag"/>
+        <result column="create_time" property="createTime"/>
+        <result column="update_time" property="updateTime"/>
+        <association property="qeUserRole" javaType="com.maoyan.ffcommunity.entity.QeUserRole">
+            <result column="user_role_id" property="userRoleId"/>
+            <result column="role_name" property="roleName"/>
+            <result column="user_id" property="userId"/>
+            <result column="role_permission" property="rolePermission"/>
+            <result column="create_time" property="createTime"/>
+            <result column="update_time" property="updateTime"/>
+        </association>
+        <association property="qeSchool" javaType="com.maoyan.ffcommunity.entity.QeSchool">
+            <result column="school_id" property="schoolId"/>
+            <result column="school_name" property="schoolName"/>
+            <result column="school_introduce" property="schoolIntroduce"/>
+            <result column="school_badge" property="schoolBadge"/>
+            <result column="school_motto" property="schoolMotto"/>
+            <result column="school_background" property="schoolBackground"/>
+            <result column="school_build_date" property="schoolBuildDate"/>
+            <result column="school_location" property="schoolLocation"/>
+            <result column="create_time" property="createTime"/>
+            <result column="update_time" property="updateTime"/>
+        </association>
+    </resultMap>
+    <select id="selectQeUserDetailById" resultMap="QeUserDetailMap">
+        select qe_user.user_id,
+               qe_user.user_name,
+               qe_user.email,
+               qe_user.phone_number,
+               qe_user.sex,
+               qe_user.avatar,
+               qe_user.status,
+               qe_user.login_ip,
+               qe_user.login_date,
+               qe_user.signature,
+               qe_user.grade,
+               qe_user.experience,
+               qe_user.email_status,
+               qe_user.school_id,
+               qe_user.delete_flag,
+               qe_user.create_time,
+               qe_user.update_time,
+               qur.user_role_id,
+               qur.role_name,
+               qur.user_id,
+               qur.role_permission,
+               qur.create_time,
+               qur.update_time,
+               qs.school_id,
+               qs.school_name,
+               qs.school_introduce,
+               qs.school_badge,
+               qs.school_motto,
+               qs.school_background,
+               qs.school_build_date,
+               qs.school_location,
+               qs.create_time,
+               qs.update_time
+        from qe_user
+                 left join qe_user_role qur on qe_user.user_id = qur.user_id
+                 left join qe_school qs on qe_user.school_id = qs.school_id
+        where qe_user.user_id = #{qeUserId}
+    </select>
+    <select id="selectQeUserByEmail" resultType="com.maoyan.ffcommunity.entity.QeUser">
+        select *
+        from qe_user
+        where email = #{qeUserEmail}
+    </select>
+    <select id="commonSelectQeUser" resultType="com.maoyan.ffcommunity.entity.QeUser">
+    </select>
+</mapper>
