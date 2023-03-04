@@ -119,6 +119,11 @@
         where give_follow_qeuser_id = #{giveFollowQeUserId}
         and get_follow_qeuser_id= #{getFollowQeUserId}
     </delete>
+    <delete id="deleteQeSectionFollow">
+        delete from qe_section_follow
+        where give_follow_qeuser_id = #{giveFollowQeUserId}
+        and get_follow_qesection_id = #{getFollowQesectionId}
+    </delete>
 
     <select id="selectQeUserFollow" resultType="com.maoyan.ffcommunity.entity.QeUserFollow">
         select *
@@ -138,4 +143,6 @@
         where give_follow_qeuser_id = #{giveFollowQeUserId}
         and get_follow_qesection_id = #{getFollowQeSectionId}
     </select>
+
+
 </mapper>

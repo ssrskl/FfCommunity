@@ -18,6 +18,8 @@ public interface QeFollowMapper {
 
     int deleteQeUserFollow(@Param("giveFollowQeUserId") Long giveFollowQeUserId, @Param("getFollowQeUserId") Long getFollowQeUserId);// 删除关注记录
 
+    int deleteQeSectionFollow(@Param("giveFollowQeUserId") Long giveFollowQeUserId, @Param("getFollowQeSectionId") Long getFollowQeSectionId);// 删除板块关注记录
+
     QeUserFollow selectQeUserFollow(@Param("giveFollowQeUserId") Long giveFollowQeUserId, @Param("getFollowQeUserId") Long getFollowQeUserId);// 查询关注数据
 
     QeSectionFollow selectQeSectionFollow(@Param("giveFollowQeUserId") Long giveFollowQeUserId, @Param("getFollowQeSectionId") Long getFollowQeSectionId); // 查询板块关注数据

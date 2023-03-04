@@ -4,6 +4,7 @@ import cn.dev33.satoken.stp.StpUtil;
 import cn.hutool.core.util.ObjectUtil;
 import com.github.pagehelper.PageHelper;
 import com.maoyan.ffcommunity.entity.QeSection;
+import com.maoyan.ffcommunity.entity.QeSectionFollow;
 import com.maoyan.ffcommunity.entity.QeUser;
 import com.maoyan.ffcommunity.entity.QeUserFollow;
 import com.maoyan.ffcommunity.entity.vo.qeuserfollow.QeUserFollowFanVO;
@@ -89,6 +90,30 @@ public class QeFollowServiceImpl implements QeFollowService {
             throw new CustomException("您没有关注此用户", HttpStatus.NOT_FOUND);
         }
         int i = qeFollowMapper.deleteQeUserFollow(StpUtil.getLoginIdAsLong(), qeUserId);
+        if (i <= 0) {
+            throw new CustomException("取消关注失败", HttpStatus.ERROR);
+        }
+        return i;
+    }
+
+    /**
+     * 取消关注指定板块
+     *
+     * @param qeSectionId
+     * @return
+     * @Description 先查询这个板块是否存在，再查询是否关注了这个板块
+     */
+    @Override
+    public int cancelFollowQeSectionById(Long qeSectionId) {
+        QeSection qeSection = qeSectionMapper.selectQeSectionById(qeSectionId);
+        if (ObjectUtil.isNull(qeSection)) {
+            throw new CustomException("该板块不存在", HttpStatus.NOT_FOUND);
+        }
+        QeSectionFollow qeSectionFollow = qeFollowMapper.selectQeSectionFollow(StpUtil.getLoginIdAsLong(), qeSectionId);
+        if (ObjectUtil.isNull(qeSectionFollow)) {
+            throw new CustomException("您没有关注此板块", HttpStatus.NOT_FOUND);
+        }
+        int i = qeFollowMapper.deleteQeSectionFollow(StpUtil.getLoginIdAsLong(), qeSectionId);
         if (i <= 0) {
             throw new CustomException("取消关注失败", HttpStatus.ERROR);
         }

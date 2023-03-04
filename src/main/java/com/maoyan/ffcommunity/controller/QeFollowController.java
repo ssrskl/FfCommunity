@@ -35,15 +35,33 @@ public class QeFollowController {
     }
 
     /**
+     * 关注指定板块【开发完成】
+     *
+     * @param qeSectionId
+     * @return
+     */
+    public AjaxResult followQeSection(Long qeSectionId) {
+        int i = qeFollowService.followQeSectionById(qeSectionId);
+        return AjaxResult.success("关注成功", i);
+    }
+
+    /**
      * 取消关注指定的用户【开发完毕】
      *
      * @param qeUserId
      * @return
      */
     @SaCheckLogin
-    @GetMapping(value = "/cancel")
+    @GetMapping(value = "/cancel/user")
     public AjaxResult cancelFollowQeUser(Long qeUserId) {
         int i = qeFollowService.cancelFollowQeUserById(qeUserId);
+        return AjaxResult.success("取消关注成功", i);
+    }
+
+    @SaCheckLogin
+    @GetMapping(value = "/cancel/section")
+    public AjaxResult cancelFollowQeSection(Long qeSectionId) {
+        int i = qeFollowService.cancelFollowQeSectionById(qeSectionId);
         return AjaxResult.success("取消关注成功", i);
     }
 

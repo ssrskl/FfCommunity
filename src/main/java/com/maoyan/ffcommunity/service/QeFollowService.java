@@ -8,9 +8,12 @@ import java.util.List;
 public interface QeFollowService {
 
     int followOtherQeUser(Long qeUserId); //关注指定用户
+
     int followQeSectionById(Long qeSectionId);//关注指定板块
 
     int cancelFollowQeUserById(Long qeUserId); //取消关注指定用户
+
+    int cancelFollowQeSectionById(Long qeSectionId); //取消关注指定板块
 
     List<QeUserFollowFanVO> queryFansById(int pageNum, int pageSize, Long qeUserId); // 查询指定用户的粉丝
 
