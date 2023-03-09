@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.maoyan.ffcommunity.mapper.QeArticleLikeMapper">
+    <delete id="deleteByPrimaryKey">
+    </delete>
+
+    <insert id="insertQeArticleLike">
+        insert into qe_article_like (give_like_qeuser_id, get_like_qearticle_id)
+        values (#{giveLikeQeuserId}, #{getLikeQearticleId});
+    </insert>
+
+    <resultMap id="QeArticleLikeQueryVO" type="com.maoyan.ffcommunity.entity.vo.qearticlelike.QeArticleLikeQueryVO">
+        <result column="like_id" property="likeId"/>
+        <result column="give_like_qeuser_id" property="giveLikeQeuserId"/>
+        <result column="get_like_qearticle_id" property="getLikeQearticleId"/>
+        <result column="like_create_time" property="createTime"/>
+        <result column="like_update_time" property="updateTime"/>
+        <association property="qeArticle" javaType="com.maoyan.ffcommunity.entity.QeArticle">
+            <result column="article_id" property="articleId"/>
+            <result column="article_title" property="articleTitle"/>
+            <result column="article_content" property="articleContent"/>
+            <result column="article_image" property="articleImage"/>
+            <result column="section_id" property="sectionId"/>
+            <result column="section_type_id" property="sectionTypeId"/>
+            <result column="author_id" property="authorId"/>
+            <result column="status" property="status"/>
+            <result column="article_weight" property="articleWeight"/>
+            <result column="article_top" property="articleTop"/>
+            <result column="delete_flag" property="deleteFlag"/>
+            <result column="qe_article_create_time" property="createTime"/>
+            <result column="qe_article_update_time" property="updateTime"/>
+        </association>
+    </resultMap>
+    <!--    结尾不能加分号，因为PageHelper要加Limit限制条件-->
+    <select id="selectQeArticleByQeUserId"
+            resultMap="QeArticleLikeQueryVO">
+        select qe_article_like.like_id
+             , qe_article_like.give_like_qeuser_id
+             , qe_article_like.get_like_qearticle_id
+             , qe_article_like.create_time as like_create_time
+             , qe_article_like.update_time as like_update_time
+             , qe_article.article_id
+             , qe_article.article_title
+             , qe_article.article_content
+             , qe_article.article_image
+             , qe_article.section_id
+             , qe_article.section_type_id
+             , qe_article.author_id
+             , qe_article.status
+             , qe_article.article_weight
+             , qe_article.article_top
+             , qe_article.delete_flag
+             , qe_article.create_time      as qe_article_create_time
+             , qe_article.update_time      as qe_article_update_time
+        from qe_article_like
+                 join qe_article on qe_article_like.get_like_qearticle_id = qe_article.article_id
+        where qe_article_like.give_like_qeuser_id = #{qeUserId}
+    </select>
+
+    <select id="countQeArticleLikeByQeArticleId" resultType="int">
+        select count(get_like_qearticle_id)
+        from qe_article_like
+        where get_like_qearticle_id = #{getLikeQearticleId};
+    </select>
+</mapper>

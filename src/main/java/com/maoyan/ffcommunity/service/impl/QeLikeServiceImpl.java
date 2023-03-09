@@ -2,10 +2,15 @@ package com.maoyan.ffcommunity.service.impl;
 
 import cn.dev33.satoken.stp.StpUtil;
 import cn.hutool.core.util.ObjectUtil;
+import com.github.pagehelper.PageHelper;
 import com.maoyan.ffcommunity.entity.QeArticle;
+import com.maoyan.ffcommunity.entity.QeUser;
+import com.maoyan.ffcommunity.entity.vo.qearticlelike.QeArticleLikeQueryVO;
 import com.maoyan.ffcommunity.enums.LikeStatusEnum;
 import com.maoyan.ffcommunity.exception.CustomException;
+import com.maoyan.ffcommunity.mapper.QeArticleLikeMapper;
 import com.maoyan.ffcommunity.mapper.QeArticleMapper;
+import com.maoyan.ffcommunity.mapper.QeUserMapper;
 import com.maoyan.ffcommunity.service.QeLikeService;
 import com.maoyan.ffcommunity.utils.HttpStatus;
 import com.maoyan.ffcommunity.utils.LikeKeyUtils;
@@ -13,12 +18,17 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 public class QeLikeServiceImpl implements QeLikeService {
 
     @Autowired
     private QeArticleMapper qeArticleMapper;
-
+    @Autowired
+    private QeUserMapper qeUserMapper;
+    @Autowired
+    private QeArticleLikeMapper qeArticleLikeMapper;
     @Autowired
     private RedisTemplate redisTemplate;
 
@@ -104,6 +114,24 @@ public class QeLikeServiceImpl implements QeLikeService {
             return 1;
         }
         return 0;
+    }
+
+    /**
+     * 查询指定用户点赞的文章
+     *
+     * @param qeUserId
+     * @return
+     * @descrption 1.判断用户是否存在 2.查询用户点赞的文章
+     */
+    @Override
+    public List<QeArticleLikeQueryVO> queryQeArticleLikeByQeUserId(int pageNum, int pageSize, Long qeUserId) {
+        QeUser qeUser = qeUserMapper.selectQeUserById(qeUserId);
+        if (ObjectUtil.isNull(qeUser)) {
+            throw new CustomException("用户不存在", HttpStatus.NOT_FOUND);
+        }
+        PageHelper.startPage(pageNum, pageSize);
+        List<QeArticleLikeQueryVO> qeArticleLikeQueryVOS = qeArticleLikeMapper.selectQeArticleByQeUserId(qeUserId);
+        return qeArticleLikeQueryVOS;
     }
 
 }

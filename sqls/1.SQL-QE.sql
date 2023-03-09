@@ -176,6 +176,22 @@ create table qe_article
   CHARACTER SET = utf8mb4 comment = '文章表';
 
 -- ----------------------------
+-- 3、用户点赞文章表
+-- ----------------------------
+drop table if exists qe_article_like;
+create table qe_article_like
+(
+    like_id               bigint(255) not null auto_increment comment '主键ID',
+    give_like_qeuser_id   bigint(255) not null comment '发起点赞的用户的ID',
+    get_like_qearticle_id bigint(255) not null comment '被点赞的文章的ID',
+    create_time           datetime default now() comment '创建时间',
+    update_time           datetime default now() comment '更新时间',
+    primary key (like_id)
+) engine = innodb
+  auto_increment = 1
+  CHARACTER SET = utf8mb4 comment = '用户点赞文章的表';
+
+-- ----------------------------
 -- 4、评论表
 -- ----------------------------
 drop table if exists qe_comment;
