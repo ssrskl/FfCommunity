@@ -82,10 +82,9 @@ public class QeArticleQueryVO {
      * 文章所属板块
      */
     private QeSection qeSection;
-    /**
-     * 文章收藏数量
-     */
-    private Long collectionCount;
+
+    private Long likeCount; // 点赞数量
+    private Long collectionCount;// 收藏数量
     /**
      * 文章评论数量
      */
