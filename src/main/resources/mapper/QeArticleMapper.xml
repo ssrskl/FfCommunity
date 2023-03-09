@@ -21,6 +21,7 @@
         <result column="article_delete_flag" property="deleteFlag"/>
         <result column="article_create_time" property="createTime"/>
         <result column="article_update_time" property="updateTime"/>
+        <result column="like_count" property="likeCount"/>
         <result column="collection_count" property="collectionCount"/>
         <result column="comment_count" property="commentCount"/>
         <association property="qeSection" javaType="com.maoyan.ffcommunity.entity.QeSection">
@@ -42,15 +43,15 @@
                qe_article.article_title,
                qe_article.article_content,
                qe_article.article_image,
-               qe_article.section_id   as article_section_id,
+               qe_article.section_id            as article_section_id,
                qe_article.section_type_id,
                qe_article.author_id,
                qe_article.status,
                qe_article.article_weight,
                qe_article.article_top,
-               qe_article.delete_flag  as article_delete_flag,
-               qe_article.create_time  as article_create_time,
-               qe_article.update_time  as article_update_time,
+               qe_article.delete_flag           as article_delete_flag,
+               qe_article.create_time           as article_create_time,
+               qe_article.update_time           as article_update_time,
                qe_section.section_id,
                qe_section.section_name,
                qe_section.section_introduce,
@@ -62,12 +63,14 @@
                qe_section.delete_flag,
                qe_section.create_time,
                qe_section.update_time,
-               COUNT(qc.collection_id) AS collection_count,
-               count(q.comment_id)     as comment_count
+               count(qal.get_like_qearticle_id) as like_count,
+               COUNT(qc.collection_id)          AS collection_count,
+               count(q.comment_id)              as comment_count
         from qe_article
                  left join qe_section on qe_article.section_id = qe_section.section_id
                  left join qe_collection as qc on qe_article.article_id = qc.article_id
                  left join qe_comment as q on qe_article.article_id = q.article_id
+                 left join qe_article_like as qal on qe_article.article_id = qal.get_like_qearticle_id
         group by qe_article.article_id
         <where>
             <if test="articleId != null">
@@ -135,6 +138,9 @@
     </update>
 
     <delete id="deleteQeArticle">
-        delete from qe_article where author_id= #{param2} and article_id= #{param1}
+        delete
+        from qe_article
+        where author_id = #{param2}
+          and article_id = #{param1}
     </delete>
 </mapper>
