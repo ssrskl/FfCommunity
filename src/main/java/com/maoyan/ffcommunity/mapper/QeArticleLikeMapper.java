@@ -13,6 +13,7 @@ import java.util.List;
 @Mapper
 public interface QeArticleLikeMapper {
     int deleteByPrimaryKey(Long likeId); //删除点赞数据
+    int deleteByQeUserIdAndQeArticleId(QeArticleLike qeArticleLike);//根据用户id和文章id删除点赞数据
 
     int insertQeArticleLike(QeArticleLike qeArticleLike);//插入点赞数据
 

@@ -1,5 +1,6 @@
 package com.maoyan.ffcommunity.controller;
 
+import cn.dev33.satoken.annotation.SaCheckLogin;
 import com.github.pagehelper.PageInfo;
 import com.maoyan.ffcommunity.entity.QeArticle;
 import com.maoyan.ffcommunity.entity.vo.qearticlelike.QeArticleLikeQueryVO;
@@ -19,6 +20,7 @@ public class QeLikeController {
     @Autowired
     private QeLikeService qeLikeService;
 
+    @SaCheckLogin
     @GetMapping("/like/article")
     public AjaxResult likeQeArticleById(Long qeArticleId) {
         int i = qeLikeService.likeQeArticleById(qeArticleId);
@@ -29,6 +31,7 @@ public class QeLikeController {
         }
     }
 
+    @SaCheckLogin
     @GetMapping("/cancellike/article")
     public AjaxResult cancelLikeQeArticleById(Long qeArticleId) {
         int i = qeLikeService.cancelLikeQeArticleById(qeArticleId);

@@ -2,6 +2,9 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="com.maoyan.ffcommunity.mapper.QeArticleLikeMapper">
     <delete id="deleteByPrimaryKey">
+        delete
+        from qe_article_like
+        where like_id = #{likeId,jdbcType=BIGINT}
     </delete>
 
     <insert id="insertQeArticleLike">
@@ -62,4 +65,11 @@
         from qe_article_like
         where get_like_qearticle_id = #{getLikeQearticleId};
     </select>
+<!--    根据用户id和文章id删除点赞数据-->
+    <delete id="deleteByQeUserIdAndQeArticleId">
+        delete
+        from qe_article_like
+        where give_like_qeuser_id = #{giveLikeQeuserId,jdbcType=BIGINT}
+          and get_like_qearticle_id = #{getLikeQearticleId,jdbcType=BIGINT}
+    </delete>
 </mapper>

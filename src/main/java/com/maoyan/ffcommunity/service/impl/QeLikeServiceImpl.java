@@ -4,6 +4,7 @@ import cn.dev33.satoken.stp.StpUtil;
 import cn.hutool.core.util.ObjectUtil;
 import com.github.pagehelper.PageHelper;
 import com.maoyan.ffcommunity.entity.QeArticle;
+import com.maoyan.ffcommunity.entity.QeArticleLike;
 import com.maoyan.ffcommunity.entity.QeUser;
 import com.maoyan.ffcommunity.entity.vo.qearticlelike.QeArticleLikeQueryVO;
 import com.maoyan.ffcommunity.enums.LikeStatusEnum;
@@ -17,6 +18,7 @@ import com.maoyan.ffcommunity.utils.LikeKeyUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -37,9 +39,10 @@ public class QeLikeServiceImpl implements QeLikeService {
      *
      * @param qeArticleId
      * @return
-     * @descrption 1.判断文章是否存在 2.判断是否已经点赞 3.执行点赞
+     * @descrption 1.判断文章是否存在 2.判断是否已经点赞 3.执行点赞  4.更新文章点赞数 5.同步点赞数到数据库
      */
     @Override
+    @Transactional
     public int likeQeArticleById(Long qeArticleId) {
         QeArticle qeArticle = qeArticleMapper.selectQeArticleById(qeArticleId);
         if (ObjectUtil.isNull(qeArticle)) {
@@ -60,6 +63,14 @@ public class QeLikeServiceImpl implements QeLikeService {
         } else {
             redisTemplate.opsForHash().increment(LikeKeyUtils.MAP_KEY_ARTICLE_LIKED_COUNT, qeArticleId, 1);
         }
+        // 同步点赞数据到数据库
+        QeArticleLike qeArticleLike = new QeArticleLike();
+        qeArticleLike.setGiveLikeQeuserId(currentQeUserId);
+        qeArticleLike.setGetLikeQearticleId(qeArticleId);
+        int i = qeArticleLikeMapper.insertQeArticleLike(qeArticleLike);
+        if (i <= 0) {
+            throw new CustomException("点赞失败", HttpStatus.ERROR);
+        }
         return 1;
     }
 
@@ -68,9 +79,10 @@ public class QeLikeServiceImpl implements QeLikeService {
      *
      * @param qeArticleId
      * @return
-     * @descrption 1.判断文章是否存在 2.判断是否已经点赞 3.执行取消点赞
+     * @descrption 1.判断文章是否存在 2.判断是否已经点赞 3.执行取消点赞 4.更新数据库信息
      */
     @Override
+    @Transactional
     public int cancelLikeQeArticleById(Long qeArticleId) {
         QeArticle qeArticle = qeArticleMapper.selectQeArticleById(qeArticleId);
         if (ObjectUtil.isNull(qeArticle)) {
@@ -90,6 +102,14 @@ public class QeLikeServiceImpl implements QeLikeService {
             redisTemplate.opsForHash().put(LikeKeyUtils.MAP_KEY_ARTICLE_LIKED_COUNT, qeArticleId, 0);
         } else {
             redisTemplate.opsForHash().increment(LikeKeyUtils.MAP_KEY_ARTICLE_LIKED_COUNT, qeArticleId, -1);
+        }
+        // 更新数据到数据库
+        QeArticleLike qeArticleLike = new QeArticleLike();
+        qeArticleLike.setGiveLikeQeuserId(currentQeUserId);
+        qeArticleLike.setGetLikeQearticleId(qeArticleId);
+        int i = qeArticleLikeMapper.deleteByQeUserIdAndQeArticleId(qeArticleLike);
+        if (i <= 0) {
+            throw new CustomException("取消点赞失败", HttpStatus.ERROR);
         }
         return 1;
     }
