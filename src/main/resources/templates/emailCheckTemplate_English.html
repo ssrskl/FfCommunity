@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta http-equiv="Content-Type" content="text/html" ; charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            width: 100%;
+            min-width: 500px;
+            max-width: 2000px;
+        }
+
+        .main {
+            margin: 20px 10%;
+            /* background-color: pink; */
+        }
+
+        .banner {
+            width: 90%;
+            padding: 20px;
+            background-color: #fff;
+            border: 1px solid #ccc;
+        }
+
+        .logo {
+            height: 20px;
+            line-height: 20px;
+        }
+
+        .logo img {
+            height: 40px;
+            width: 40px;
+        }
+
+        .logo i {
+            font-style: normal;
+            font-size: 20px;
+            font-weight: 800;
+        }
+
+        .logo i:last-child {
+            color: rgb(0, 121, 90);
+        }
+        .namediv{
+            margin-top: 10px;
+        }
+        .name{
+            font-size: 20px;
+            color: rebeccapurple;
+            font-weight: 800;
+            background-color: #fff;
+        }
+
+        /* 验证 */
+        .verif {
+            margin-top: 15px;
+            font-size: 20px;
+            color: rgb(0, 121, 90);
+            font-weight: 800;
+            background-color: #fff;
+        }
+
+        .msg1 {
+            font-size: 14px;
+            margin-top: 20px;
+            color: #555;
+        }
+
+        .ver-code {
+            height: 40px;
+            margin-top: 20px;
+            line-height: 40px;
+            text-align: center;
+            font-size: 20px;
+            color: rgb(37, 56, 88);
+            background-color: rgb(242, 242, 242);
+            border: 1px solid #ccc;
+        }
+
+        .company {
+            margin: 20px auto;
+            text-align: center;
+            font-size: 12px;
+            color: #666;
+        }
+    </style>
+</head>
+
+<body>
+<div class="main">
+    <div class="banner">
+        <div class="logo">
+            <!-- <img src="./images/wind.png" alt=""> -->
+            <i>Fufeng</i><i>Community</i>
+        </div>
+        <div class="namediv">
+            <div style="display: inline" class="verif">Dear</div>
+            <div style="display: inline" class="name" th:text="${username}"></div>
+        </div>
+        <div class="verif">Verify your email address.</div>
+        <div class="msg1">Below is your email verification code, please enter it into the verification code input box in
+            your email:
+        </div>
+        <div class="ver-code" th:text="${checkCode}"></div>
+        <div class="msg1">This email includes some of your private account information. Please do not reply or forward
+            it to avoid unnecessary information leakage risks.
+        </div>
+    </div>
+    <div class="company">Fufeng Community - College Student Community</div>
+</div>
+</body>
+
+</html>

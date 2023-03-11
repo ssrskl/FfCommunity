@@ -9,6 +9,7 @@ import com.maoyan.ffcommunity.entity.vo.qeuser.QeUserUpdateVO;
 import com.maoyan.ffcommunity.entity.vo.qeuser.QeUserVO;
 import com.maoyan.ffcommunity.service.QeUserService;
 import com.maoyan.ffcommunity.utils.AjaxResult;
+import jakarta.mail.MessagingException;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -30,7 +31,7 @@ public class QeUserController {
     public AjaxResult qeUserRegister(@RequestBody QeUserVO qeUserVO) {
         QeUser qeUser = new QeUser();
         BeanUtils.copyProperties(qeUserVO, qeUser);
-        int i = qeUserService.QeUserRegister(qeUser);
+        int i = qeUserService.QeUserRegister(qeUser,qeUserVO.getQeEmailCode());
         return AjaxResult.success(i);
     }
 
@@ -49,4 +50,18 @@ public class QeUserController {
         int i = qeUserService.updateCurrentQeUserInfo(qeUser);
         return AjaxResult.success("更新成功", i);
     }
+
+    @GetMapping("/email")
+    public AjaxResult SendEmailCode(String qeEmail) {
+        int i = qeUserService.SendEmailCode(qeEmail);
+        return AjaxResult.success(i);
+    }
+
+    @GetMapping("/test/email")
+    public AjaxResult TestEmail() throws MessagingException {
+        int i = qeUserService.TestEmail();
+        return AjaxResult.success(i);
+    }
+
+
 }

@@ -1,11 +1,15 @@
 package com.maoyan.ffcommunity;
 
-import com.maoyan.ffcommunity.entity.vo.qeuser.QeUserDetailVO;
-import com.maoyan.ffcommunity.mapper.QeUserMapper;
+import jakarta.mail.MessagingException;
+import jakarta.mail.internet.MimeMessage;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.mail.SimpleMailMessage;
+import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.mail.javamail.JavaMailSenderImpl;
+import org.springframework.mail.javamail.MimeMessageHelper;
 
 @SpringBootApplication
 public class FfcommunityApplication {
@@ -31,11 +35,25 @@ public class FfcommunityApplication {
     }
 
     @Autowired
-    private QeUserMapper qeUserMapper;
-
+    private JavaMailSender javaMailSender;
     @Test
-    public void test() {
-        QeUserDetailVO qeUserDetailVO = qeUserMapper.selectQeUserDetailById(1L);
-        System.out.println(qeUserDetailVO.toString());
+    public void testEmail() throws MessagingException {
+//        JavaMailSenderImpl javaMailSender = new JavaMailSenderImpl();
+//        javaMailSender.setHost("smtp.qq.com");
+//        javaMailSender.setPort(465);
+//        javaMailSender.setUsername("1071352028@qq.com");
+//        javaMailSender.setPassword("ngdfnbqvzgnrbfha");
+//        javaMailSender.setJavaMailProperties(new java.util.Properties() {{
+//            put("mail.smtp.auth", true);
+//            put("mail.smtp.ssl.enable", true);
+//        }});
+        // 建立信息
+        MimeMessage mimeMessage = javaMailSender.createMimeMessage();
+        MimeMessageHelper mimeMessageHelper = new MimeMessageHelper(mimeMessage, "UTF-8");
+        mimeMessageHelper.setSubject("测试邮件");
+        mimeMessageHelper.setText("<h1>测试邮件</h1>", true);
+        mimeMessageHelper.setTo("1071352028@qq.com");
+        mimeMessageHelper.setFrom("1071352028@qq.com");
+        javaMailSender.send(mimeMessage);
     }
 }

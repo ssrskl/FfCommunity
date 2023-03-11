@@ -18,4 +18,5 @@ public class QeUserVO {
     private String password;
     private String signature;
     private Long schoolId;
+    private String qeEmailCode;
 }

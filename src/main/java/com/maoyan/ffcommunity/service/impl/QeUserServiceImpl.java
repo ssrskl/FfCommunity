@@ -2,6 +2,10 @@ package com.maoyan.ffcommunity.service.impl;
 
 import cn.dev33.satoken.stp.SaTokenInfo;
 import cn.dev33.satoken.stp.StpUtil;
+import cn.hutool.captcha.CaptchaUtil;
+import cn.hutool.captcha.LineCaptcha;
+import cn.hutool.captcha.generator.CodeGenerator;
+import cn.hutool.captcha.generator.RandomGenerator;
 import cn.hutool.core.util.ObjectUtil;
 import cn.hutool.core.util.StrUtil;
 import cn.hutool.crypto.SecureUtil;
@@ -12,13 +16,33 @@ import com.maoyan.ffcommunity.exception.CustomException;
 import com.maoyan.ffcommunity.mapper.QeUserMapper;
 import com.maoyan.ffcommunity.service.QeUserService;
 import com.maoyan.ffcommunity.utils.HttpStatus;
+import com.maoyan.ffcommunity.utils.QeEmailUtil;
+import jakarta.mail.MessagingException;
+import jakarta.mail.internet.MimeMessage;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.mail.SimpleMailMessage;
+import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import org.thymeleaf.context.Context;
+import org.thymeleaf.spring6.SpringTemplateEngine;
 
 @Service
 public class QeUserServiceImpl implements QeUserService {
     @Autowired
     private QeUserMapper qeUserMapper;
+
+    @Autowired
+    private JavaMailSender javaMailSender;
+
+    @Autowired
+    private QeEmailUtil qeEmailUtil;
+    @Autowired
+    private SpringTemplateEngine templateEngine;
+    @Autowired
+    private RedisTemplate redisTemplate;
 
     /**
      * 用户注册
@@ -28,10 +52,24 @@ public class QeUserServiceImpl implements QeUserService {
      */
     //TODO 未添加邮件验证
     @Override
-    public int QeUserRegister(QeUser qeUser) {
+    @Transactional
+    public int QeUserRegister(QeUser qeUser, String qeEmailCode) {
         String md5Password = SecureUtil.md5(qeUser.getPassword());
         qeUser.setPassword(md5Password);
+        // 验证邮箱验证码
+        String redisEmailCode = (String) redisTemplate.opsForValue().get(qeUser.getEmail());
+        if (StrUtil.isBlank(redisEmailCode)) {
+            throw new CustomException("验证码已过期", HttpStatus.FORBIDDEN);
+        }
+        if (!redisEmailCode.equals(qeEmailCode)) {
+            throw new CustomException("验证码错误", HttpStatus.BAD_REQUEST);
+        }
+        // 设置用户状态为已激活
+        qeUser.setEmailStatus(true);
         int i = qeUserMapper.insertQeUser(qeUser);
+        if (i <= 0) {
+            throw new CustomException("注册失败", HttpStatus.ERROR);
+        }
         return i;
     }
 
@@ -105,4 +143,46 @@ public class QeUserServiceImpl implements QeUserService {
         SaTokenInfo saTokenInfo = StpUtil.getTokenInfo();
         return saTokenInfo;
     }
+
+    /**
+     * 测试邮件发送
+     *
+     * @return
+     */
+    @Override
+    public int TestEmail() throws MessagingException {
+        Context emailContext = new Context();
+        emailContext.setVariable("username", "测试");
+        emailContext.setVariable("url", "http://www.baidu.com");
+        String process = templateEngine.process("emailCheckTemplate_English.html", emailContext);
+        qeEmailUtil.sendMailByThymeleaf("测试", "oimaoyanio@163.com", process);
+        return 0;
+    }
+
+    /**
+     * 发送邮箱验证码
+     *
+     * @param qeEmail
+     * @return
+     */
+    @Override
+    public int SendEmailCode(String qeEmail) {
+        Context emailContext = new Context();
+        RandomGenerator randomGenerator = new RandomGenerator("0123456789", 6);
+        String generateCode = randomGenerator.generate();
+        emailContext.setVariable("username", qeEmail);
+        emailContext.setVariable("checkCode", generateCode);
+        String process = templateEngine.process("emailCheckTemplate_English.html", emailContext);
+        try {
+            qeEmailUtil.sendMailByThymeleaf("扶风社区注册验证码", qeEmail, process);
+        } catch (MessagingException e) {
+            throw new RuntimeException(e);
+        }
+        // 将验证码存入缓存
+        redisTemplate.opsForHash().put("emailCheckCode", qeEmail, generateCode);
+        //设置验证码过期时间
+        redisTemplate.expire(qeEmail, 3 * 60, java.util.concurrent.TimeUnit.SECONDS);
+        return 1;
+    }
+
 }
